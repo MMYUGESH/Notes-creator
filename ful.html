@@ -168,13 +168,7 @@ display: none;
 
 </div>
 </div>
-<script>function invokeSearchtext(){
-   var keycode = (event.keyCode ? event.keyCode : event.which);
-      if(keycode == '13'){
-        alert(" enter pressed! ");
-        searchtext(); 
-      }
-} 
+<script>
 
 function searchtext(){
   var parList  = document.getElementsByClassName("card-text");
@@ -347,7 +341,7 @@ function resetAndDisplayAll(){
   if(inputList==""){
     displayAll(parList);
  }
-  document.getElementById('searchString').value="";
+ // document.getElementById('searchString').value="";
 }
 
 </script>
