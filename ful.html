@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="icon" href="https://logos-download.com/wp-content/uploads/2016/11/Deutsche_Telekom_logo_pink-700x367.png" type="image/icon type">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+	<style>
+		.btn-group-sm>.btn, .btn-sm {
+   border-radius: 0rem; 
+  }
+
+.btn-success {
+    color: #fff;
+    background-color: #093e10;
+    border-color: #093e10;
+   font-size: 0.8em;
+}
+.topnav{
+	margin-top:2px;
+	overflow: hidden;
+	background-color: purple;
+}
+.topnav .search-container {
+  float: right;
+  font-size: 1em;
+  
+}
+
+.topnav #searchString {
+    padding: 6px;
+    padding-left: 32px;
+    margin-top: 8px;
+    font-size: 17px;
+    border: none;
+}
+
+.topnav .search-container button {
+    float: right;
+    padding: 6px 10px;
+    margin-top: 8px;
+    margin-right: 16px;
+    background: white;
+    color: #4CAF50;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+#controller{
+	padding: 5%;
+	text-align:center;
+  font-size: 1em;
+}
+
+#controller #main-content {
+ padding: 0.9% 1%;
+  /*  font-size: 16px;*/
+    width: 50%;
+}
+
+#controller #submit-note {
+    padding: 1%;
+  /*  font-size: 18px;*/
+    background-color: blue;
+    color: #f2f2f2;
+    cursor: pointer;
+    border:none
+}
+.sticky-btn{
+	padding: 1%;
+	font-size: 12px;
+	background-color: #4CAF50;
+	color: #f2f2f2;
+	cursor: pointer;
+	border:none;
+	margin-left: 2%
+}
+
+.card-container{
+	 width: 60%;
+    margin-left: 20%;
+    margin-bottom: 2%;
+  	box-shadow: 6px 5px 1px rgba(0, 0, 0, .08);
+    display: inline-block;
+    overflow: auto;
+
+}
+.card-container .bg-olive{
+  background-color: red!important;
+
+}
+   
+.sticky-note-card{
+	width: 90%;
+    margin-left: 2%;
+    margin-bottom: 2%;
+    height: 200px;
+    background-color: yellow;
+    display: inline-block;
+    overflow: auto;
+
+}
+.myColor{
+    height: 30px;
+    width: 8%;
+    padding: 1%;
+}
+
+@media only screen and (max-width: 767px) {
+  body {
+    
+    font-size: 12px;
+  }
+
+.card-container{
+  width: 97%;
+    margin: 1% 2%;
+}
+
+.topnav .search-container {
+    padding-bottom: 2%;
+    margin: 0% 19%;
+    float:left;
+}
+
+.topnav a{
+  width: 100%;
+} 
+
+.topnav #searchString{
+    font-size: 11px;
+    width: 188%;
+}
+
+.topnav .search-container button {
+display: none;
+}
+
+
+}
+	</style>
+  
+</head>
+
+<body>
+<div class="topnav">
+ <div class="search-container">
+    <i class="fa fa-search icon" style="
+    color: #4CAF50;
+    position: absolute;
+    padding: 17px 10px;
+    min-width: 43px;
+"></i>
+     <input type="search" placeholder="Search.." onsearch="searchtext(event)" id="searchString"/>
+      <button type="button" onclick="resetAndDisplayAll()"><i class="fa fa-close"></i></button>
+    
+  </div>
+</div>
+
+<div id="wrapper">
+<div id="controller">
+	<input type ="text" name="sticky-message" id="main-content" onkeypress="invokeCreateStickyNote(event)"  placeholder="Enter text..."/>
+	<button type="button" id="submit-note" onclick="createNote()">Create Note</button>
+</div>
+
+<div id="card-area">
+
+</div>
+</div>
+<script>function invokeSearchtext(){
+   var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        alert(" enter pressed! ");
+        searchtext(); 
+      }
+} 
+
+function searchtext(){
+  var parList  = document.getElementsByClassName("card-text");
+  var inputList = document.getElementById("searchString").value.trim();
+  //initializeTextString(globalString,parList); // Maintaining fresh copy of paragraph list  
+ 
+  if(inputList.length==0){
+    displayAll(parList);
+ }
+ else{
+    initiateSearching(parList, inputList);
+   } 
+}
+
+
+function initiateSearching(parList, inputList){    
+  var filterInput = inputList.toLowerCase();
+  for(var i=0; i<parList.length; i++){ 
+    var resultHtml ="", start=0 ;       
+    var str = parList[i].innerText;
+    var filterStr =str.toLowerCase();
+    var nextIndex= filterStr.indexOf(filterInput, 0);   
+    while(nextIndex > -1){
+      var lastIndex = nextIndex + filterInput.length;      
+      var subStr = str.slice(nextIndex, lastIndex);       
+      var htmlString =  '<span class="highlight" style="background-color:black; color:white">'+subStr+'</span>';         
+      resultHtml += str.slice(start, nextIndex)+ htmlString;      
+     // console.log("paragraph no. "+i+ " first Index : "+nextIndex +" LastIndex: "+lastIndex+ " str : "+inputList+ " subStr : "+subStr);
+      start = lastIndex;// Updating the variable start
+      nextIndex = filterStr.indexOf(filterInput, lastIndex);// Updating the variable nextIndex
+      if(nextIndex <= -1 ){
+          resultHtml += str.slice(lastIndex) ; 
+          parList[i].innerHTML = resultHtml;   
+          parList[i].closest('.card').style.display="";  
+      }
+    }
+    if(filterStr.indexOf(filterInput,0) <=-1){
+       //console.log(" input string "+filterInput+" Not available in this card .Now find the child of this card to find the matching string if any ");
+       var TargetCard = parList[i].closest('.card');
+       if(!isStringMatchedToAnyChildCard(TargetCard, filterInput)){
+           parList[i].closest('.card').style.display="none";  
+       }
+      }
+   } 
+}
+
+function isStringMatchedToAnyChildCard(card, filterInput){
+  var isfound= false;
+  var cardList = card.querySelectorAll('.card');  
+  //console.log(" cardlist length :: "+ cardList.length);
+  for(var i=0; i< cardList.length; i++){
+    var paragraphs = cardList[i].querySelectorAll('.card-text');
+    for(var j=0; j< paragraphs.length; j++){ 
+     var sentence= paragraphs[j].innerText
+     // console.log(" paragraph sentence at position :: "+ i+" "+sentence);
+      if(sentence!=undefined || sentence!=null || sentence!=""){
+          var filterStr = sentence.toLowerCase();
+      //   console.log(" filterStr sentence :: "+ filterStr);
+      }     
+      if(filterStr.indexOf(filterInput,0) > -1){
+        //  console.log("************ " +filterInput +" found in child card ***** ");
+        isfound = true;
+        break;
+       }
+    }
+  }
+  return isfound;
+}
+//6
+function displayAll(parList){
+ console.log("input empty 1");
+ for(var i=0; i<parList.length; i++){
+    parList[i].closest('.card').style.display="";
+     //parList[i].style.display="";
+     parList[i].closest('.card').style.color="";
+     parList[i].style.color="";
+     
+ }
+}
+//7
+ /* function{
+  var spanList = document.getElementsByClassName("highlight");   
+  for(var i=0; i<spanList.length ; i++){    
+  console.log("Removing  highlight !");   
+      spanList[i].style.backgroundColor="";
+      spanList[i].style.color="";
+   } 
+}
+*/
+//5
+function deleteNote(event){
+  var targetCard = event.target.closest('.card');
+  var cardContainer = event.target.closest('.card-container');
+  targetCard.remove();
+  var divs = cardContainer.querySelectorAll('.card'); 
+  if(divs==null|| divs.length < 1){
+    cardContainer.remove();
+  }
+}
+
+//content for subnotes 6
+function createNewNote(){
+  var noteText = prompt("Please enter text:", "");
+  if (noteText == null || noteText == "") {
+    alert(" Please enter text to create note !")
+  } else {
+      var newCard = getCard(noteText);
+      var carBody = event.target.closest('.card-body');
+      carBody.appendChild(newCard);
+   
+  }
+ }
+
+// new update  3
+function createCardContainer(textContent){
+  var cardList = document.getElementById('card-area');
+  var cardContainer  = document.createElement("div");
+  cardContainer.setAttribute('class','card-container bg-danger');
+//  cardContainer.setAttribute('id','');
+  var card = getCard(textContent);
+  cardContainer.appendChild(card);
+  cardList.prepend(cardContainer);
+  return cardContainer;
+}
+
+
+
+// new update 2
+function createNote(){
+  var mainContent = document.getElementById('main-content').value;
+  if(mainContent==null|| mainContent==""){
+    alert("Please enter text note to proceed !")
+  }else{
+    var cardContainer= createCardContainer(mainContent);
+    document.getElementById('main-content').value="";
+   
+
+  }
+}
+//createtypesearchtext1
+function invokeCreateStickyNote(event){
+   var keycode = (event.keyCode ? event.keyCode : event.which);
+      if(keycode == '13'){
+        createNote(); 
+      }
+ }
+// Notes are created   4
+function getCard(noteText){
+  //var cardWrapper = document.createElement('div');
+    var htmlString = '<div class="card ">\
+    <div class="card-body">\
+      <p contenteditable="true" data-placeholder="Insert text here..." class="card-text">'+noteText+'</p>\
+      <a href="javascript:void(0);" class="btn btn-sm btn-success" onclick="deleteNote(event)">Delete</a>\
+       <a href="javascript:void(0);" class="btn btn-sm  btn-success" onclick="createNewNote(event)">New Notes</a>\
+      </div>\
+   </div>';
+   var cardWrapper = new DOMParser().parseFromString(htmlString, "text/html");
+   
+   var card = cardWrapper.getElementsByClassName('card')[0]; 
+  return card;
+}
+
+//resets1
+function resetAndDisplayAll(){
+  var inputList=document.getElementById('searchString').value;
+  inputList="";
+  var parList  = document.getElementsByClassName("card-text");
+ // initializeTextString(globalString,parList);
+ 
+  if(inputList==""){
+    displayAll(parList);
+ }
+  document.getElementById('searchString').value="";
+}
+
+</script>
+</body>
+</html>	
